@@ -19,7 +19,7 @@ def constant_columns(df):
 
 # Checking for unique counts of values in each column of the dataframe
 def unique_counts(df):
-    return df.unique().value_counts().to_dict()
+    return {col: int(df[col].nunique()) for col in df.columns}
 
 # Checking the numeric range of columns in the dataframe
 def numeric_range(df):
@@ -38,7 +38,7 @@ def numeric_range(df):
 def categorical_inconsistencies(df, threshold=20):
     categorical_cols = [col for col in df.select_dtypes(include='object') if df[col].nunique() < threshold]
     return {
-        col: df[col].value_counts().to_dict
+        col: df[col].value_counts().to_dict()
         for col in categorical_cols
     }
 
