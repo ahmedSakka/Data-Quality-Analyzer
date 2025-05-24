@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # Checking for missing values in the dataframe
 def missing_values(df):
@@ -14,12 +15,12 @@ def data_types(df):
 
 # Checking for constant columns in the dataframe
 def constant_columns(df):
-    constant_cols = [col for col in df.columns if df[col].nunique() == 1]
+    constant_cols = [col for col in df.columns if df[col].nunique(dropna= False) <= 1]
     return {"constant_columns": constant_cols}
 
 # Checking for unique counts of values in each column of the dataframe
 def unique_counts(df):
-    return {col: int(df[col].nunique()) for col in df.columns}
+    return {col: int(df[col].nunique(dropna= False)) for col in df.columns}
 
 # Checking the numeric range of columns in the dataframe
 def numeric_range(df):
@@ -34,21 +35,37 @@ def numeric_range(df):
         for col in numeric_cols.columns
     }
 
-# Checkinf for categorical inconsistencies in the dataframe
+# Checking for categorical inconsistencies in the dataframe
 def categorical_inconsistencies(df, threshold=20):
-    categorical_cols = [col for col in df.select_dtypes(include='object') if df[col].nunique() < threshold]
+    categorical_cols = [col for col in df.select_dtypes(include='object') if df[col].nunique(dropna= False) < threshold]
     return {
-        col: df[col].value_counts().to_dict()
+        col: df[col].value_counts(dropna= False).to_dict()
         for col in categorical_cols
     }
 
+# Detecting outliers in the dataframe using IQR method
+def outlier_detection(df):
+    numeric_cols = df.select_dtypes(include= [np.number])
+    outliers = {}
+    for col in numeric_cols.columns:
+        q1 = numeric_cols[col].quantile(0.25)
+        q3 = numeric_cols[col].quantile(0.75)
+        iqr = q3 -q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        count = df[(df[col] < lower_bound) | (df[col] > upper_bound)].shape[0]
+        if count > 0:
+            outliers[col] = int(count)
+    return outliers
+
 def quality_check(df):
     return{
-        "missing_values": missing_values(df),
-        "duplicate_rows": duplicate_rows(df),
-        "data_types": data_types(df),
-        "constant_columns": constant_columns(df),
-        "unique_counts": unique_counts(df),
-        "numeric_range": numeric_range(df),
-        "categorical_inconsistencies": categorical_inconsistencies(df)
+        "Missing_values": missing_values(df),
+        "Duplicate_rows": duplicate_rows(df),
+        "Data_types": data_types(df),
+        "Constant_columns": constant_columns(df),
+        "Unique_counts": unique_counts(df),
+        "Numeric_range": numeric_range(df),
+        "Categorical_inconsistencies": categorical_inconsistencies(df),
+        "Outliers": outlier_detection(df)
     }
