@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from .validations import validate_data
 
 # Checking for missing values in the dataframe
 def missing_values(df):
@@ -58,8 +59,8 @@ def outlier_detection(df):
             outliers[col] = int(count)
     return outliers
 
-def quality_check(df):
-    return{
+def quality_check(df, validate= False):
+    report = {
         "Missing_values": missing_values(df),
         "Duplicate_rows": duplicate_rows(df),
         "Data_types": data_types(df),
@@ -69,3 +70,8 @@ def quality_check(df):
         "Categorical_inconsistencies": categorical_inconsistencies(df),
         "Outliers": outlier_detection(df)
     }
+
+    if validate:
+        report["Warnings"] = validate_data(df)
+    
+    return report
