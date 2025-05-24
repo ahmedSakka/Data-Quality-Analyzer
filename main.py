@@ -12,7 +12,8 @@ def analyze(file_path: str,
             save: bool = typer.Option(False, "--save" ,help="Save the report."),
             format: str = typer.Option("json", help="Format of the report (json or markdown). Default is json."),
             summary: bool = typer.Option(False, "--summary", help= "Show a concise summary of the report."),
-            columns: Optional[List[str]] = typer.Option(None, "--columns", help="Specify columns to analyze. If not provided, all columns will be analyzed.")):
+            columns: Optional[List[str]] = typer.Option(None, "--columns", help="Specify columns to analyze. If not provided, all columns will be analyzed."),
+            validate: bool = typer.Option(False, "--validate", help="Run validation checks on the data.")):
     try:
         df = pd.read_csv(file_path)
     except Exception as e:
@@ -32,7 +33,7 @@ def analyze(file_path: str,
     else:
         typer.echo("Analyzing all columns in the DataFrame.")
 
-    report = quality_check(df)
+    report = quality_check(df, validate=validate)
 
     typer.echo("Quality check completed.")
 
