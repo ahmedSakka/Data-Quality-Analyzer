@@ -18,11 +18,18 @@ def save_markdown(report: dict, output_dir: str = "reports") -> str:
 
 def dict_to_markdown(d: dict, indent: int = 0) -> str:
     md = ""
+    prefix = "#" * (indent + 2)
     for key, value in d.items():
-        prefix = "#" * (indent + 2)
-        md += f"\n{prefix} {key.capitalize().replace('_', ' ')}\n"
+        md += f"\n{prefix} {key.replace('_', ' ').title()}\n"
         if isinstance(value, dict):
-            md += dict_to_markdown(value, indent + 1)
+            for sub_key, sub_val in value.items():
+                md += f"- **{sub_key}**: {sub_val}\n"
+        elif isinstance(value, list):
+            if value:
+                for item in value:
+                    md += f"- {item}\n"
+            else:
+                md += "- No items found.\n"
         else:
             md += f"- {value}\n"
     return md
