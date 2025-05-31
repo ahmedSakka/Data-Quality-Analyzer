@@ -2,7 +2,7 @@ import typer
 import pandas as pd
 import json
 from commands.quality_check import quality_check
-from commands.reporting import save_json, save_markdown
+from commands.reporting import save_json, save_markdown, save_pdf
 from typing import List, Optional
 
 app = typer.Typer()
@@ -10,7 +10,7 @@ app = typer.Typer()
 @app.command()
 def analyze(file_path: str, 
             save: bool = typer.Option(False, "--save" ,help="Save the report."),
-            format: str = typer.Option("json", help="Format of the report (json or markdown). Default is json."),
+            format: str = typer.Option("json", help="Format of the report (json, markdown, or pdf). Default is json."),
             summary: bool = typer.Option(False, "--summary", help= "Show a concise summary of the report."),
             columns: Optional[List[str]] = typer.Option(None, "--columns", help="Specify columns to analyze. If not provided, all columns will be analyzed."),
             validate: bool = typer.Option(False, "--validate", help="Run validation checks on the data.")):
@@ -51,6 +51,8 @@ def analyze(file_path: str,
             path = save_json(report)
         elif format == "markdown":
             path = save_markdown(report)
+        elif format == "pdf":
+            path = save_pdf(report, df)
         else:
             typer.echo("Invalid format. Please choose 'json' or 'markdown'")
             raise typer.Exit(code=1)
