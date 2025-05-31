@@ -1,6 +1,6 @@
 # 🧪 Data Quality Analyzer
 
-The **Data Quality Analyzer** is a command-line Python tool built with [Typer](https://typer.tiangolo.com/) that performs automated quality checks on CSV datasets. It helps analysts and data engineers identify common data issues such as missing values, duplicates, inconsistent categories, and outliers. This tool can generate detailed reports in both JSON and Markdown formats.
+The **Data Quality Analyzer** is a command-line Python tool built with [Typer](https://typer.tiangolo.com/) that performs automated quality checks on CSV datasets. It helps analysts and data engineers identify common data issues such as missing values, duplicates, inconsistent categories, and outliers. This tool can generate detailed reports in JSON, Markdown, and PDF formats.
 
 ---
 
@@ -55,6 +55,11 @@ python main.py analyze data.csv
 
 ```bash
 python main.py analyze data.csv --save --format markdown
+```
+#### OR
+
+```bash
+python main.py analyze data.csv --save --format pdf
 ```
 
 ### Summary Only
