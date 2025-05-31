@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from fpdf import FPDF
 import pandas as pd
+import re
 
 def save_json(report: dict, output_dir: str = "reports") -> str:
     os.makedirs(output_dir, exist_ok= True)
@@ -50,6 +51,10 @@ def save_pdf(report: dict, df, output_dir: str = "reports") -> str:
     pdf.cell(0, 10, f"{df} data quality report", ln= True, align='C')
     pdf.ln(10)
 
+    # Sanitizing the saved images' filenames
+    def sanitize_filename(name: str) -> str:
+        return re.sub(r'[^\w\s-]', '_', name)
+
     # Key metrics
     for section, content in report.items():
         pdf.set_font("Arial", 'B', size=14)
@@ -86,7 +91,8 @@ def save_pdf(report: dict, df, output_dir: str = "reports") -> str:
         fig, ax = plt.subplots(figsize=(8, 6))
         sns.boxplot(x=df[col], ax=ax, color='skyblue')
         plt.title(f"Boxplot of {col}")
-        img_path = os.path.join(output_dir, f"{col}_boxplot_{timestamp_str}.png")
+        safe_col = sanitize_filename(col)
+        img_path = os.path.join(output_dir, f"{safe_col}_boxplot_{timestamp_str}.png")
         plt.savefig(img_path, bbox_inches='tight')
         plt.close(fig)
 
